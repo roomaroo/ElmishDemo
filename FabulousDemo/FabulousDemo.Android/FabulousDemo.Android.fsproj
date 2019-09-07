@@ -27,8 +27,8 @@
     <RestorePackages>true</RestorePackages>
     <OtherFlags>/warnon:1182</OtherFlags>
     <WarningLevel>4</WarningLevel>
-    <SelectedDevice>pixelxl</SelectedDevice>
-    <DefaultDevice>pixelxl</DefaultDevice>
+    <SelectedDevice>pixelxl_lite</SelectedDevice>
+    <DefaultDevice>pixelxl_lite</DefaultDevice>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
