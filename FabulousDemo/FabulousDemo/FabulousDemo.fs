@@ -11,14 +11,17 @@ module App =
     type Msg = 
         | Increment 
         | Decrement 
+        | Reset
 
 
-    let init () = { Count = 0 }, Cmd.none
+    let initialModel = { Count = 0 }
+    let init () = initialModel, Cmd.none
 
     let update msg model =
         match msg with
         | Increment -> { model with Count = model.Count + 1 }, Cmd.none
         | Decrement -> { model with Count = model.Count - 1 }, Cmd.none
+        | Reset -> initialModel, Cmd.none
 
     let view (model: Model) dispatch =
         View.ContentPage(
@@ -39,6 +42,11 @@ module App =
                     text = "Decrement", 
                     fontSize = 30,
                     command = (fun () -> dispatch Decrement))
+
+                View.Button(
+                    text = "Reset", 
+                    fontSize = 30,
+                    command = (fun () -> dispatch Reset))
             ]))
 
     // Note, this declaration is needed if you enable LiveUpdate
