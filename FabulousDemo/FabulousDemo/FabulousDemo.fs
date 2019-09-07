@@ -6,22 +6,24 @@ open Fabulous.XamarinForms.LiveUpdate
 open Xamarin.Forms
 
 module App = 
-    type Model = { Count : int }
+    type Model = { Count : int; StepSize : int }
 
     type Msg = 
         | Increment 
         | Decrement 
         | Reset
+        | SetStep of int
 
 
-    let initialModel = { Count = 0 }
+    let initialModel = { Count = 0; StepSize = 1 }
     let init () = initialModel, Cmd.none
 
     let update msg model =
         match msg with
-        | Increment -> { model with Count = model.Count + 1 }, Cmd.none
-        | Decrement -> { model with Count = model.Count - 1 }, Cmd.none
+        | Increment -> { model with Count = model.Count + model.StepSize }, Cmd.none
+        | Decrement -> { model with Count = model.Count - model.StepSize }, Cmd.none
         | Reset -> initialModel, Cmd.none
+        | SetStep n -> { model with StepSize = n}, Cmd.none
 
     let view (model: Model) dispatch =
         View.ContentPage(
@@ -32,6 +34,19 @@ module App =
                     fontSize = 50,
                     textColor = (if model.Count < 0 then Color.Red else Color.Black),
                     horizontalTextAlignment=TextAlignment.Center)
+
+                View.Slider(
+                    minimumMaximum = (0.0, 10.0),
+                    value = float model.StepSize,
+                    horizontalOptions = LayoutOptions.FillAndExpand,
+                    valueChanged = (fun args -> dispatch (SetStep (int args.NewValue)))
+                )
+                
+                View.Label(
+                    text = sprintf "Step: %d" model.StepSize,
+                    fontSize = 30,
+                    horizontalTextAlignment=TextAlignment.Center
+                )
 
                 View.Button(
                     text = "Increment", 
