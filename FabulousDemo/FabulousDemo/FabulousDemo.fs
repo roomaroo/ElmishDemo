@@ -11,6 +11,7 @@ module App =
     type Msg = 
         | Increment 
         | Decrement 
+        | Reset
 
 
     let init () = { Count = 0 }, Cmd.none
@@ -19,6 +20,7 @@ module App =
         match msg with
         | Increment -> { model with Count = model.Count + 1 }, Cmd.none
         | Decrement -> { model with Count = model.Count - 1 }, Cmd.none
+        | Reset -> { Count = 0 }, Cmd.none
 
     let view (model: Model) dispatch =
         View.ContentPage(
@@ -27,7 +29,6 @@ module App =
                 View.Label(
                     text = sprintf "%d" model.Count, 
                     fontSize = 50,
-                    textColor = (if model.Count < 0 then Color.Red else Color.Black),
                     horizontalTextAlignment=TextAlignment.Center)
 
                 View.Button(
@@ -39,6 +40,11 @@ module App =
                     text = "Decrement", 
                     fontSize = 30,
                     command = (fun () -> dispatch Decrement))
+                    
+                View.Button(
+                        text = "Reset", 
+                        fontSize = 30,
+                        command = (fun () -> dispatch Reset))
             ]))
 
     // Note, this declaration is needed if you enable LiveUpdate
