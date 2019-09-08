@@ -6,9 +6,14 @@ open Fabulous.XamarinForms.LiveUpdate
 open Xamarin.Forms
 
 module App = 
-    type Model = { Count : int; StepSize : int; TimerOn : bool }
+    type CounterModel = { Count : int; StepSize : int; TimerOn : bool }
+
+    type Model = 
+        | NotLoggedIn
+        | LoggedIn of CounterModel
 
     type Msg = 
+        | Login
         | Increment 
         | Decrement 
         | Reset
@@ -16,28 +21,37 @@ module App =
         | SetTimer of bool
         | TimerElapsed
 
-    let initialModel = { Count = 0; StepSize = 1; TimerOn = false }
+    let initialCounterModel = { Count = 0; StepSize = 1; TimerOn = false }
 
-    let init () = initialModel, Cmd.none
+    let init () = NotLoggedIn, Cmd.none
 
     let timerCmd = 
         async {
             do! Async.Sleep 1000
             return TimerElapsed
         } |> Cmd.ofAsyncMsg
-    let update msg model =
+
+    let updateCounter msg model =
         match msg with
+        | Login -> initialCounterModel, Cmd.none
         | Increment -> { model with Count = model.Count + model.StepSize }, Cmd.none
         | Decrement -> { model with Count = model.Count - model.StepSize }, Cmd.none
-        | Reset -> initialModel, Cmd.none
+        | Reset -> initialCounterModel, Cmd.none
         | SetStep n -> { model with StepSize = n}, Cmd.none
         | SetTimer on -> { model with TimerOn = on }, if on then timerCmd else Cmd.none
         | TimerElapsed ->
             {model with Count = model.Count + model.StepSize},
             if model.TimerOn then timerCmd else Cmd.none
                 
+    let update msg model =
+        match msg, model with
+        | Login, NotLoggedIn -> LoggedIn initialCounterModel, Cmd.none
+        | _, LoggedIn m -> 
+            let (model, cmd) = updateCounter msg m 
+            LoggedIn model, cmd
+        | _ -> model, Cmd.none
 
-    let view (model: Model) dispatch =
+    let loggedInView (model: CounterModel) dispatch =
         View.ContentPage(
           content = View.StackLayout(padding = 20.0, verticalOptions = LayoutOptions.Center,
             children = [ 
@@ -87,6 +101,21 @@ module App =
                             toggled = (fun args -> dispatch (SetTimer args.Value)))
                         ])
             ]))
+            
+    let notLoggedInView dispatch =
+        View.ContentPage(
+          content = View.StackLayout(padding = 20.0, verticalOptions = LayoutOptions.Center,
+            children = [ 
+                View.Button(
+                    text = "Login",
+                    fontSize = 30,
+                    command = (fun () -> dispatch  Login)
+                )]))
+
+    let view model dispatch =
+        match model with
+        | NotLoggedIn -> notLoggedInView dispatch
+        | LoggedIn counterModel -> loggedInView counterModel dispatch
 
     // Note, this declaration is needed if you enable LiveUpdate
     let program = Program.mkProgram init update view
