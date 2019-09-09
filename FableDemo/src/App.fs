@@ -23,7 +23,7 @@ let update msg model : Model * Cmd<Msg> =
 
 let view model dispatch =
   div
-    [ClassName "section has-text-centered"]
+    [classList [("section", true); ("has-text-centered", true)]]
     [
         h1 
           []
