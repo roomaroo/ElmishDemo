@@ -21,26 +21,31 @@ let update msg model : Model * Cmd<Msg> =
   | Decrement -> { model with Count = model.Count - 1}, Cmd.none
   | Reset -> initialModel, Cmd.none
 
-
 let view model dispatch =
   div
-    []
+    [ClassName "section has-text-centered"]
     [
         h1 
           []
           [str (sprintf "Counter value: %i" model.Count)]
         
-        button 
-          [OnClick (fun _ -> dispatch Decrement)] 
-          [str "DECREMENT"]
-        
-        button 
-          [OnClick (fun _ -> dispatch Increment)] 
-          [str "INCREMENT"]
-        
-        button 
-          [OnClick (fun _ -> dispatch Reset)] 
-          [str "Reset"]
+        div 
+          []
+          [
+            button 
+              [ClassName "button"; OnClick (fun _ -> dispatch Decrement)] 
+              [str "Decrement"]
+            
+            button 
+              [ClassName "button"; OnClick (fun _ -> dispatch Increment)] 
+              [str "Increment"]
+            
+            button 
+              [
+                classList [("button", true); ("is-danger", true)];
+                OnClick (fun _ -> dispatch Reset)] 
+              [str "Reset"]
+          ]
     ]
 
 open Elmish.Debug
