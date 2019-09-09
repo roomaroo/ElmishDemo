@@ -1,7 +1,6 @@
 module App.View
 
 open Elmish
-open Elmish.Browser.Navigation
 open Fable.Helpers.React
 open Fable.Helpers.React.Props
 
@@ -14,40 +13,36 @@ type Msg =
 
 let initialModel = { Count = 0 }
 
-let init _ = initialModel, []
+let init _ = initialModel, Cmd.none
 
 let update msg model : Model * Cmd<Msg> = 
   match msg with
-  | Increment -> { model with Count = model.Count + 1}, []
-  | Decrement -> { model with Count = model.Count - 1}, []
-  | Reset -> initialModel, []
+  | Increment -> { model with Count = model.Count + 1}, Cmd.none
+  | Decrement -> { model with Count = model.Count - 1}, Cmd.none
+  | Reset -> initialModel, Cmd.none
 
 
 let view model dispatch =
-  let simpleButton txt action dispatch =
-    div
-      [ Style [Margin "5px"] ]
-      [ a
-          [ ClassName "button"
-            OnClick (fun _ -> action |> dispatch) ]
-          [ str txt ] ]
-
   div
-    [ Style[ 
-        Display "flex"; 
-        FlexDirection "column"; 
-        JustifyContent "center"; 
-        AlignItems "center"
-        Height "100%"] ]
-    [ div
-        []
-        [ str (sprintf "Counter value: %i" model.Count) ]
-      simpleButton "Increment" Increment dispatch
-      simpleButton "Decrement" Decrement dispatch
-      simpleButton "Reset" Reset dispatch ]
+    []
+    [
+        h1 
+          []
+          [str (sprintf "Counter value: %i" model.Count)]
+        
+        button 
+          [OnClick (fun _ -> dispatch Decrement)] 
+          [str "DECREMENT"]
+        
+        button 
+          [OnClick (fun _ -> dispatch Increment)] 
+          [str "INCREMENT"]
+        
+        button 
+          [OnClick (fun _ -> dispatch Reset)] 
+          [str "Reset"]
+    ]
 
-
-open Elmish.React
 open Elmish.Debug
 open Elmish.HMR
 

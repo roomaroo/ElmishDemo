@@ -5,5 +5,8 @@
   <ItemGroup>
     <Compile Include="App.fs" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Zanaptak.TypedCssClasses" Version="0.1.0" />
+  </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
