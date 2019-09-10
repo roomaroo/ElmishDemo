@@ -14,45 +14,39 @@ type Msg =
 
 let initialModel = { Count = 0 }
 
-let init _ = initialModel, []
+let init _ = initialModel
 
-let update msg model : Model * Cmd<Msg> = 
+let update msg model : Model = 
   match msg with
-  | Increment -> { model with Count = model.Count + 1}, []
-  | Decrement -> { model with Count = model.Count - 1}, []
-  | Reset -> initialModel, []
+  | Increment -> { model with Count = model.Count + 1}
+  | Decrement -> { model with Count = model.Count - 1}
+  | Reset -> initialModel
 
 
 let view model dispatch =
-  let simpleButton txt action dispatch =
-    div
-      [ Style [Margin "5px"] ]
-      [ a
-          [ ClassName "button"
-            OnClick (fun _ -> action |> dispatch) ]
-          [ str txt ] ]
-
+    
   div
-    [ Style[ 
-        Display "flex"; 
-        FlexDirection "column"; 
-        JustifyContent "center"; 
-        AlignItems "center"
-        Height "100%"] ]
-    [ div
+    []
+    [ h1
         []
         [ str (sprintf "Counter value: %i" model.Count) ]
-      simpleButton "Increment" Increment dispatch
-      simpleButton "Decrement" Decrement dispatch
-      simpleButton "Reset" Reset dispatch ]
-
+      button 
+        [OnClick (fun _ -> dispatch Increment)]
+        [str "Increment"]
+      button 
+        [OnClick (fun _ -> dispatch Decrement)]
+        [str "Decrement"]
+      button 
+        [OnClick (fun _ -> dispatch Reset)]
+        [str "Reset"]        
+    ]
 
 open Elmish.React
 open Elmish.Debug
 open Elmish.HMR
 
 // App
-Program.mkProgram init update view
+Program.mkSimple init update view
 |> Program.withDebugger
 |> Program.withReact "elmish-app"
 |> Program.run
